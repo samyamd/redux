@@ -15,7 +15,7 @@ export default function SinglePost() {
         .get(`https://fakestoreapi.com/products/${id}`)
         .catch((err) => console.log(err));
       dispatch(selectedposts(res.data));
-      setLoader(state.loading);
+      setLoader();
     })();
     return () => {
       // cleanup

@@ -8,10 +8,12 @@ export default function Home() {
   return (
     <div>
       <p className="h4">Total Products: {posts?.posts?.length}</p>
-      <p className="h4">
-        Recent View:
-        <Link to={`/post/${posts.id}`}>{posts?.title}</Link>
-      </p>
+      {posts?.title && (
+        <p className="h4">
+          Recent View:
+          <Link to={`/post/${posts.id}`}>{posts?.title}</Link>
+        </p>
+      )}
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setposts } from "../actions";
 import { Link } from "react-router-dom";
 
 export default function Login() {
+  const [loader, setLoader] = useState(true);
   const posts = useSelector((state) => state.allPosts.posts);
   const dispatch = useDispatch();
 
@@ -14,11 +15,16 @@ export default function Login() {
         .get("https://fakestoreapi.com/products")
         .catch((err) => console.log(err));
       dispatch(setposts(res.data));
+      setLoader(false);
     })();
     return () => {};
   }, []);
 
-  return (
+  return loader ? (
+    <div className="text-center d-block">
+      <div className="spinner-border text-primary"></div>
+    </div>
+  ) : (
     <div className="container my-3">
       {posts?.length}
       <div className="row">
