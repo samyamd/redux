@@ -1,34 +1,46 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setposts } from "../actions";
+import { errorProducts, readyProduct, setposts } from "../actions";
 import { Link } from "react-router-dom";
+import { api } from "../helper/apiCalls";
 
 export default function Login() {
-  const [loader, setLoader] = useState(true);
-  const posts = useSelector((state) => state.allPosts.posts);
+  const fetchPosts = useSelector((state) => state.allPosts);
+  console.log(fetchPosts);
+  const { loading, posts, error } = fetchPosts;
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    (async () => {
-      const res = await axios
-        .get("https://fakestoreapi.com/products")
-        .catch((err) => console.log(err));
+  const getProducts = async () => {
+    try {
+      dispatch(readyProduct());
+      const res = await api("get", "products", null, null);
       dispatch(setposts(res.data));
-      setLoader(false);
-    })();
+      // AsyncStorage()
+    } catch (error) {
+      dispatch(errorProducts(error));
+    }
+  };
+
+  useEffect(() => {
+    if (posts?.length > 0) {
+      return;
+    }
+    getProducts();
+
     return () => {};
   }, []);
 
-  return loader ? (
+  return loading ? (
     <div className="text-center d-block">
       <div className="spinner-border text-primary"></div>
     </div>
+  ) : error ? (
+    <h2>{error.message}</h2>
   ) : (
     <div className="container my-3">
       {posts?.length}
       <div className="row">
-        {posts.map((post) => (
+        { posts && posts.map((post) => (
           <div className="col-sm-4" key={post.id}>
             <div className="card">
               <div className="card-header">
